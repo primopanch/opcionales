@@ -1,12 +1,10 @@
+import java.awt.*;
+import java.io.*;
 import javax.swing.*;
 import javax.swing.border.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
 
 public class UpdateARCSControlFile extends JFrame {
 
-    // Declaración de componentes como variables de instancia para acceder a ellos al guardar
     private JSpinner yearSpinner;
     private JTextField txtBatch1, txtBatch2, txtCO;
     private JTextField txtAccount1, txtAccount2;
@@ -21,26 +19,22 @@ public class UpdateARCSControlFile extends JFrame {
     private JTextField txtResultingCode;
 
     public UpdateARCSControlFile() {
-        // 1. Configuración básica de la ventana
         setTitle("Update ARCS Control File");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout(5, 5));
-        getContentPane().setBackground(new Color(212, 208, 200)); // Color clásico de Windows
+        getContentPane().setBackground(new Color(212, 208, 200));
         
-        // Intentar usar el estilo del sistema operativo actual
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // 2. Panel principal que contendrá todas las secciones
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         mainPanel.setBackground(new Color(212, 208, 200));
 
-        // 3. Añadir las secciones al panel principal
         mainPanel.add(createAccountInfoPanel());
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         mainPanel.add(createIndustryCodingPanel());
@@ -51,19 +45,17 @@ public class UpdateARCSControlFile extends JFrame {
         add(createBottomPanel(), BorderLayout.SOUTH);
 
         pack();
-        setLocationRelativeTo(null); // Centrar en pantalla
+        setLocationRelativeTo(null);
         setResizable(false);
     }
 
-    // --- SECCIÓN 1: ARS Account Information ---
     private JPanel createAccountInfoPanel() {
         JPanel panel = createTitledPanel("ARS Account Information");
         panel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(2, 5, 2, 5); // Margen entre componentes
+        gbc.insets = new Insets(2, 5, 2, 5);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Fila 0
         gbc.gridx = 0; gbc.gridy = 0; panel.add(new JLabel("Year:"), gbc);
         yearSpinner = new JSpinner(new SpinnerNumberModel(2008, 1900, 2100, 1));
         gbc.gridx = 1; gbc.gridy = 0; panel.add(yearSpinner, gbc);
@@ -79,7 +71,6 @@ public class UpdateARCSControlFile extends JFrame {
         txtCO = new JTextField("no", 3);
         gbc.gridx = 5; gbc.gridy = 0; panel.add(txtCO, gbc);
 
-        // Fila 1
         gbc.gridx = 0; gbc.gridy = 1; panel.add(new JLabel("Account:"), gbc);
         JPanel accountPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         txtAccount1 = new JTextField("0000000001", 10);
@@ -95,7 +86,6 @@ public class UpdateARCSControlFile extends JFrame {
         txtCMI = new JTextField("00", 3);
         gbc.gridx = 5; gbc.gridy = 1; panel.add(txtCMI, gbc);
 
-        // Fila 2
         gbc.gridx = 0; gbc.gridy = 2; panel.add(new JLabel("Circumstance:"), gbc);
         cbCircumstance = new JComboBox<>(new String[]{"None", "Option 1"});
         gbc.gridx = 1; gbc.gridy = 2; gbc.gridwidth = 3; gbc.fill = GridBagConstraints.HORIZONTAL; panel.add(cbCircumstance, gbc);
@@ -104,7 +94,6 @@ public class UpdateARCSControlFile extends JFrame {
         txtCurrentResponseCode = new JTextField("46", 3);
         gbc.gridx = 5; gbc.gridy = 2; panel.add(txtCurrentResponseCode, gbc);
 
-        // Fila 3 (Botones intermedios)
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
         buttonsPanel.setBackground(new Color(212, 208, 200));
         buttonsPanel.add(new JButton("2008 1"));
@@ -119,7 +108,6 @@ public class UpdateARCSControlFile extends JFrame {
         return panel;
     }
 
-    // --- SECCIÓN 2: Industry Coding ---
     private JPanel createIndustryCodingPanel() {
         JPanel panel = createTitledPanel("Industry Coding");
         panel.setLayout(new GridBagLayout());
@@ -137,10 +125,9 @@ public class UpdateARCSControlFile extends JFrame {
         return panel;
     }
 
-    // --- SECCIÓN 3: Non Economic Coding ---
     private JPanel createNonEconomicCodingPanel() {
         JPanel panel = createTitledPanel("Non Economic Coding");
-        panel.setLayout(new GridLayout(1, 2, 10, 0)); // Dos columnas
+        panel.setLayout(new GridLayout(1, 2, 10, 0));
 
         JPanel col1 = createColumnPanel();
         txtTown1 = addLabeledField(col1, "Town:", "126");
@@ -161,12 +148,10 @@ public class UpdateARCSControlFile extends JFrame {
         return panel;
     }
 
-    // --- SECCIÓN 4: Botonera Inferior ---
     private JPanel createBottomPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         panel.setBackground(new Color(212, 208, 200));
 
-        // Etiqueta y campo de código resultante (con borde)
         JPanel resultPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         resultPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         resultPanel.setBackground(new Color(212, 208, 200));
@@ -175,13 +160,12 @@ public class UpdateARCSControlFile extends JFrame {
         resultPanel.add(txtResultingCode);
         panel.add(resultPanel);
 
-        // Botones de acción principal
         JButton btnAccept = new JButton("Accept and Save");
         btnAccept.setForeground(Color.RED);
-        btnAccept.addActionListener(e -> guardarDatos()); // Evento para guardar
+        btnAccept.addActionListener(e -> guardarDatos());
 
         JButton btnCancel = new JButton("Cancel");
-        btnCancel.addActionListener(e -> dispose()); // Cierra la ventana actual
+        btnCancel.addActionListener(e -> dispose());
 
         JButton btnHelp = new JButton("Help");
         btnHelp.setForeground(Color.RED);
@@ -193,15 +177,12 @@ public class UpdateARCSControlFile extends JFrame {
         return panel;
     }
 
-    // --- MÉTODOS AUXILIARES ---
-
-    // Crea un panel con borde gris y título blanco sobre fondo gris oscuro
     private JPanel createTitledPanel(String title) {
         JPanel panel = new JPanel();
-        panel.setBackground(new Color(160, 160, 160)); // Fondo gris oscuro de las cajas
+        panel.setBackground(new Color(160, 160, 160));
         Border line = BorderFactory.createLineBorder(Color.GRAY);
         TitledBorder titledBorder = BorderFactory.createTitledBorder(line, title);
-        titledBorder.setTitleColor(Color.WHITE); // Título en blanco
+        titledBorder.setTitleColor(Color.WHITE);
         panel.setBorder(titledBorder);
         return panel;
     }
@@ -221,7 +202,7 @@ public class UpdateARCSControlFile extends JFrame {
         
         gbc.gridx = 0; gbc.gridy = gridy;
         JLabel label = new JLabel(labelText);
-        label.setForeground(Color.WHITE); // Texto en blanco por el fondo oscuro
+        label.setForeground(Color.WHITE);
         panel.add(label, gbc);
         
         gbc.gridx = 1; gbc.gridy = gridy; gbc.anchor = GridBagConstraints.WEST;
@@ -231,12 +212,9 @@ public class UpdateARCSControlFile extends JFrame {
         return textField;
     }
 
-    // --- LÓGICA DE PERSISTENCIA (GUARDADO) ---
     private void guardarDatos() {
-        // Usamos try-with-resources para asegurar que el archivo se cierre automáticamente
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("datos.txt", true))) {
             
-            // Construimos la línea CSV recopilando los datos
             String lineaDatos = String.join(",",
                 yearSpinner.getValue().toString(),
                 txtBatch1.getText(), txtBatch2.getText(),
@@ -253,7 +231,7 @@ public class UpdateARCSControlFile extends JFrame {
             );
 
             writer.write(lineaDatos);
-            writer.newLine(); // Salto de línea para el siguiente registro
+            writer.newLine();
             
             JOptionPane.showMessageDialog(this, "Datos guardados correctamente en datos.txt", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             
@@ -263,7 +241,6 @@ public class UpdateARCSControlFile extends JFrame {
     }
 
     public static void main(String[] args) {
-        // Ejecutar la interfaz en el Hilo de Despacho de Eventos (EDT) por seguridad
         SwingUtilities.invokeLater(() -> {
             new UpdateARCSControlFile().setVisible(true);
         });
